@@ -17,7 +17,6 @@ COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 
 def new_ball():
-    '''рисует новый шарик'''
     global x, y, r
     x = randint(100,700)
     y = randint(100,500)
@@ -25,34 +24,31 @@ def new_ball():
     color = COLORS[randint(0, 5)]
     circle(screen, color, (x, y), r)
 
-
-
-def click_event(x, y, r, xpos, ypos):
-    if (ypos - y)**2 + (xpos - x)**2 <= r**2:
-        return True
-    else:
-        return False
-
+def click(event):
+    print(x, y, r)
 
 pygame.display.update()
 clock = pygame.time.Clock()
 finished = False
-
+E = []
+points = 0
 while not finished:
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
-
-            print('Click!')
+            E = pygame.mouse.get_pos()
+            x1 = E[0]
+            y1 = E[1]
+            if ((x1 - x) ** 2 + (y1 - y) ** 2) ** 0.5 <= r:
+                print('попал')
+                points += 1
+                print('Количество очков', points)
+            else:
+                print('не попал')
     new_ball()
     pygame.display.update()
     screen.fill(BLACK)
-
 pygame.quit()
 
-#def click(event):
-    #global points
-    #if (event.y - y)**2 + (event.x - x)**2 <= r**2:
-        #points += 1
