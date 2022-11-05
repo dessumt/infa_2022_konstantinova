@@ -1,3 +1,4 @@
+'''Игра поймай шарик. Успеваешь кликнуть - зарабатываешь очки'''
 import pygame
 from pygame.draw import *
 from random import randint
@@ -16,6 +17,7 @@ BLACK = (0, 0, 0)
 COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
 
 
+'''описывает характеристики шарика: положение, размер, цвет'''
 def new_ball():
     global x, y, r
     x = randint(100,700)
@@ -24,6 +26,7 @@ def new_ball():
     color = COLORS[randint(0, 5)]
     circle(screen, color, (x, y), r)
 
+'''шарики появляются'''
 def click(event):
     print(x, y, r)
 
@@ -38,6 +41,7 @@ while not finished:
         if event.type == pygame.QUIT:
             finished = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            '''проверка на попадание'''
             E = pygame.mouse.get_pos()
             x1 = E[0]
             y1 = E[1]
@@ -51,4 +55,3 @@ while not finished:
     pygame.display.update()
     screen.fill(BLACK)
 pygame.quit()
-
