@@ -7,7 +7,7 @@ pygame.init()
 FPS = 2
 screen = pygame.display.set_mode((1200, 900))
 
-# набор цветов
+# набор цветов шаров
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
