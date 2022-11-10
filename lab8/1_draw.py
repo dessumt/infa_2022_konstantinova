@@ -1,6 +1,6 @@
 import pygame
 from pygame.draw import *
-
+'''домик'''
 pygame.init()
 
 FPS = 30
