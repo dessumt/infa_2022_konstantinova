@@ -4,7 +4,7 @@ from pygame.draw import *
 from random import randint
 pygame.init()
 
-FPS = 2
+FPS = 3
 screen = pygame.display.set_mode((1200, 900))
 
 RED = (255, 0, 0)
@@ -28,7 +28,7 @@ def new_ball():
     circle(screen, color, (x, y), r)
 
 
-# шарики появляются
+# шарики появляются на экране
 def click():
     print(x, y, r)
 
