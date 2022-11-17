@@ -5,7 +5,7 @@ from random import randint
 import pygame
 
 
-FPS = 3333
+FPS = 33
 
 RED = 0xFF0000
 BLUE = 0x0000FF
@@ -18,9 +18,10 @@ BLACK = (0, 0, 0)
 WHITE = 0xFFFFFF
 GREY = 0x7D7D7D
 GAME_COLORS = [RED, BLUE, YELLOW, GREEN, MAGENTA, CYAN]
-
 WIDTH = 799
 HEIGHT = 600
+
+
 class Ball:
     def __init__(self, screen: pygame.Surface, x=40, y=450):
         """ Конструктор класса ball
@@ -47,9 +48,9 @@ class Ball:
         """
         # FIXME
         if self.y + self.r >= 600:
-            self.vy = self.vy/3
-            self.vx *= 9/10
-        if self.x + self.r >= 800:
+            self.vy = self.vy/4
+            self.vx *= 0.7
+        if self.x + self.r >= 799:
             self.vx *= -1
         self.x += self.vx
         self.y -= self.vy
@@ -61,7 +62,13 @@ class Ball:
             (self.x, self.y),
             self.r
         )
-
+    def drawb(self):
+        pygame.draw.ellipse(
+            self.screen,
+            self.color,
+            (10, 50,
+            280, 100)
+        )
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
@@ -73,9 +80,8 @@ class Ball:
         # FIXME
         if (obj.x-self.x)**2+(obj.y - self.y)**2 <= (obj.r-self.r)**2:
             return True
-        return False
-
-
+        else:
+            return False
 
 
 class Gun:
@@ -85,9 +91,6 @@ class Gun:
         self.f2_on = 0
         self.an = 1
         self.color = GREY
-
-
-
 
     def fire2_start(self, event):
         self.f2_on = 1
@@ -120,10 +123,10 @@ class Gun:
 
     def draw(self):
     # FIXIT don't know how to do it
-        pygame.draw.polygon(screen, self.color, [[40, 460],
-                                                 [40, 460],
-        [40+self.f2_power * math.cos(self.an), 460 + self.f2_power * math.cos(self.an)],
-        [40 + self.f2_power * math.cos(self.an), 460 + self.f2_power * math.cos(self.an)]])
+        pygame.draw.polygon(screen, self.color, [[50, 490],
+                                                 [40, 440],
+        [40+self.f2_power * math.cos(self.an), 440 + self.f2_power * math.sin(self.an)],
+        [50 + self.f2_power * math.cos(self.an), 490 + self.f2_power * math.sin(self.an)]])
 
     def power_up(self):
         if self.f2_on:
@@ -135,28 +138,53 @@ class Gun:
 
 
 class Target:
-    def __init__(self, screen):
+    def new_target(self, screen, type):
         self.points = 0
         self.live = 1
-        x = self.x = randint(600, 780)
-        y = self.y = randint(600, 780)
-        r = self.r = randint(0, 50)
+        self.x = randint(600, 780)
+        self.y = randint(300, 550)
+        self.screen = screen
+        self.color = RED
+        if type == 1:
+            self.vx = randint(-40, 40)
+            self.vy = randint(-40, 40)
+            self.r = randint(25, 50)
+        if type == 2:
+            self.r = randint(5, 10)
+            self.vx = randint(-20, 20)
+            self.vy = randint(-20, 20)
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.new_target()
 
-    def new_target(self):
-        """ Инициализация новой цели. """
-        x = self.x = rnd(600, 780)
-        y = self.y = rnd(300, 550)
-        r = self.r = rnd(2, 50)
-        color = self.color = RED
+    def move(self):
+        if (self.x + self.y >= 799) or (self.x - self.y <= 0):
+            self.vx *= (-1)
+        if (self.x + self.y >= 600) or (self.x - self.y <= 0):
+            self.vy *= (-1)
+        self.x += self.vx
+        self.y += self.vy
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
         self.points += points
 
     def draw(self):
-        .....
+        pygame.draw.circle(
+            self.screen,
+            self.color,
+            (self.x, self.y),
+            self.r
+        )
+        self.move()
+
+    def drawb(self):
+        pygame.draw.ellipse(
+            self.screen,
+            self.color,
+            (10, 50,
+            280, 100)
+        )
+        self.move()
 
 
 pygame.init()
@@ -166,15 +194,22 @@ balls = []
 
 clock = pygame.time.Clock()
 gun = Gun(screen)
-target = Target(screen)
+target = Target()
+type = randint(1, 2)
+target.new_target(screen, type)
 finished = False
+points = 0
 
 while not finished:
     screen.fill(WHITE)
+    type = randint(1, 2)
     gun.draw()
     target.draw()
     for b in balls:
-        b.draw()
+        if abs(b.vx)>=0.2:
+            b.draw()
+        else:
+            pygame.draw.circle(screen, WHITE, (b.x, b.y), b.r) or pygame.draw.ellipse(screen, WHITE, (b.x, b.y), b.r)
     pygame.display.update()
 
     clock.tick(FPS)
@@ -193,7 +228,7 @@ while not finished:
         if b.hittest(target) and target.live:
             target.live = 0
             target.hit()
-            target.new_target()
+            target.new_target(screen, type)
     gun.power_up()
 
 pygame.quit()
