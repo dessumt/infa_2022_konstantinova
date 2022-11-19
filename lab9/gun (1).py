@@ -62,13 +62,8 @@ class Ball:
             (self.x, self.y),
             self.r
         )
-    def drawb(self):
-        pygame.draw.ellipse(
-            self.screen,
-            self.color,
-            (10, 50,
-            280, 100)
-        )
+
+
     def hittest(self, obj):
         """Функция проверяет сталкивалкивается ли данный обьект с целью, описываемой в обьекте obj.
 
@@ -91,6 +86,8 @@ class Gun:
         self.f2_on = 0
         self.an = 1
         self.color = GREY
+        self.x = 20
+        self.y = 700
 
     def fire2_start(self, event):
         self.f2_on = 1
@@ -124,7 +121,7 @@ class Gun:
     def draw(self):
     # FIXIT don't know how to do it
         pygame.draw.polygon(screen, self.color, [[50, 490],
-                                                 [40, 440],
+                                                 [30, 400],
         [40+self.f2_power * math.cos(self.an), 440 + self.f2_power * math.sin(self.an)],
         [50 + self.f2_power * math.cos(self.an), 490 + self.f2_power * math.sin(self.an)]])
 
@@ -146,23 +143,27 @@ class Target:
         self.screen = screen
         self.color = RED
         if type == 1:
-            self.vx = randint(-40, 40)
-            self.vy = randint(-40, 40)
+            self.vx = randint(-5, 5)
+            self.vy = randint(-5, 5)
             self.r = randint(25, 50)
         if type == 2:
             self.r = randint(5, 10)
-            self.vx = randint(-20, 20)
-            self.vy = randint(-20, 20)
+            self.vx = randint(-5, 5)
+            self.vy = randint(-5, 5)
     # FIXME: don't work!!! How to call this functions when object is created?
     # self.new_target()
 
     def move(self):
-        if (self.x + self.y >= 799) or (self.x - self.y <= 0):
+        if (self.x + self.vx + self.r > 799) or (self.x + self.vx - self.r < 0.3*799):
             self.vx *= (-1)
-        if (self.x + self.y >= 600) or (self.x - self.y <= 0):
             self.vy *= (-1)
-        self.x += self.vx
+        if (self.y + self.vy + self.r > 0.8*600) or (self.y + self.vy - self.r < 20):
+            self.vx *= (-1)
+            self.vy *= (-1)
         self.y += self.vy
+        self.x += self.vx
+
+
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
@@ -177,14 +178,7 @@ class Target:
         )
         self.move()
 
-    def drawb(self):
-        pygame.draw.ellipse(
-            self.screen,
-            self.color,
-            (10, 50,
-            280, 100)
-        )
-        self.move()
+
 
 
 pygame.init()
@@ -209,7 +203,7 @@ while not finished:
         if abs(b.vx)>=0.2:
             b.draw()
         else:
-            pygame.draw.circle(screen, WHITE, (b.x, b.y), b.r) or pygame.draw.ellipse(screen, WHITE, (b.x, b.y), b.r)
+            pygame.draw.circle(screen, WHITE, (b.x, b.y), b.r)
     pygame.display.update()
 
     clock.tick(FPS)
